@@ -1,0 +1,20 @@
+CC = gcc
+CFLAGS = -O3 -march=native -std=c11 -Wall -Wextra
+LDFLAGS = -fopenmp
+LDLIBS = 
+
+PROGRAMAS = mmClasicaOpenMP
+
+.PHONY: all clean run
+
+all: $(PROGRAMAS)
+
+mmClasicaOpenMP: mmClasicaOpenMP.c
+	$(CC) $(CFLAGS) -fopenmp $< -o $@ $(LDFLAGS) $(LDLIBS)
+
+run: mmClasicaOpenMP
+	@if [ -z "$(N)" ]; then echo "Uso: make run N=1024 [T=8]"; exit 1; fi
+	@./mmClasicaOpenMP $(N) $(T)
+
+clean:
+	$(RM) $(PROGRAMAS) *.o

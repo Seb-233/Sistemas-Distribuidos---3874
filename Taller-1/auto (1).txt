@@ -1,0 +1,30 @@
+#!/usr/bin/perl
+use strict;
+use warnings;
+use Cwd 'abs_path';
+
+my $Path = abs_path(".");
+my $Nombre_Ejecutable = "mmClasicaOpenMP";
+
+# 12 tamaños (<14K). Ajusta si tu máquina tiene poca RAM.
+my @Size_Matriz = (256, 512, 768, 1024, 1536, 2048, 3072, 4096, 5120, 6144, 7168, 8192);
+my @Num_Hilos   = (1, 4, 8, 16, 20);
+my $Repeticiones = 5;
+
+my $exe = "$Path/$Nombre_Ejecutable";
+die "No existe $exe. Compila primero con 'make'.\n" unless -x $exe;
+
+foreach my $size (@Size_Matriz){
+	foreach my $hilo (@Num_Hilos) {
+		my $file = "$Path/$Nombre_Ejecutable-$size-Hilos-$hilo.dat";
+		open(my $fh, ">>", $file) or die "No puedo abrir $file: $!\n";
+		for (my $i=0; $i<$Repeticiones; $i++) {
+			# El programa imprime: N,threads,time_sec
+			my $out = `$exe $size $hilo`;
+			print $fh $out;
+		}
+		close($fh);
+		print "OK -> $file\n";
+	}
+}
+
